@@ -1,26 +1,32 @@
+
 import { existsSync } from 'fs';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
-
-/**
- * Constante indiquant si la base de données existe au démarrage du serveur 
- * ou non.
- */
+import 'dotenv/config'
+// const { existsSync } = require('fs')
+// const sqlite3 = require('sqlite3')
+// const { open } = require('sqlite')
+// const dotenv = require('dotenv')
+// dotenv.config()
+// Constante indiquant si la base de données existe au démarrage du serveur 
+// ou non.
 const IS_NEW = !existsSync(process.env.DB_FILE)
+console.log(IS_NEW)
 
-/**
- * Crée une base de données par défaut pour le serveur. Des données fictives
- * pour tester le serveur y ont été ajouté.
- */
+// Crée la structure de la base de données et y ajoute des données
 const createDatabase = async (connectionPromise) => {
-    let connection = await connectionPromise;
-
-    await connection.exec(
-        `CREATE TABLE type_utilisateur(
-			id_type_utilisateur INTEGER PRIMARY KEY,
-			nom TEXT NOT NULL
-		);
-		
+	let connection = await connectionPromise;
+	console.log('is in')
+	await connection.exec(`
+        DROP TABLE IF EXISTS type_utilisateur;
+        DROP TABLE IF EXISTS etat_commande;
+        DROP TABLE IF EXISTS produit;
+        DROP TABLE IF EXISTS utilisateur;
+        DROP TABLE IF EXISTS commande;
+        DROP TABLE IF EXISTS commande_produit;
+    `);
+	await connection.exec(
+		`
 		CREATE TABLE etat_commande(
 			id_etat_commande INTEGER PRIMARY KEY,
 			nom TEXT NOT NULL
@@ -32,7 +38,10 @@ const createDatabase = async (connectionPromise) => {
 			chemin_image TEXT,
 			prix REAL
 		);
-		
+		CREATE TABLE type_utilisateur(
+			id_type_utilisateur INTEGER PRIMARY KEY,
+			nom TEXT NOT NULL
+		);
 		CREATE TABLE utilisateur(
 			id_utilisateur INTEGER PRIMARY KEY,
 			id_type_utilisateur INTEGER,
@@ -73,24 +82,26 @@ const createDatabase = async (connectionPromise) => {
 		INSERT INTO etat_commande(nom) VALUES('cuisine');
 		INSERT INTO etat_commande(nom) VALUES('livraison');
 		INSERT INTO etat_commande(nom) VALUES('terminée');
+		INSERT INTO produit(nom,prix) VALUES('toffaha',50);
+		INSERT INTO produit(nom,prix) VALUES('toffaha',50);
+		INSERT INTO produit(nom,prix) VALUES('toffaha',50);
 		
 		INSERT INTO utilisateur(id_type_utilisateur, courriel, mot_de_passe, prenom, nom)
 		VALUES(1, 'test@test.com', 'Test1234', 'Test', 'Test');`
-    );
-
-    return connection;
-}
+	);
+	return connection;
+};
 
 // Base de données dans un fichier
 let connectionPromise = open({
-    filename: process.env.DB_FILE,
-    driver: sqlite3.Database
+	filename: process.env.DB_FILE,
+	driver: sqlite3.Database
 });
 
 // Si le fichier de base de données n'existe pas, on crée la base de données
 // et on y insère des données fictive de test.
 if (IS_NEW) {
-    connectionPromise = createDatabase(connectionPromise);
+	connectionPromise = createDatabase(connectionPromise);
 }
 
-export default connectionPromise;
+export { createDatabase, connectionPromise };
