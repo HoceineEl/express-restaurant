@@ -4,7 +4,7 @@
   "description": "a restaurant website",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "devStart": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,16 @@
   "bugs": {
     "url": "https://github.com/HoceineEl/express-restaurant/issues"
   },
-  "homepage": "https://github.com/HoceineEl/express-restaurant#readme"
+  "homepage": "https://github.com/HoceineEl/express-restaurant#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "connect-sqlite3": "^0.9.13",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "sequelize": "^6.34.0",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
 }
