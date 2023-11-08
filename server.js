@@ -1,7 +1,6 @@
 import express from 'express';
 import { open } from 'sqlite';
 import sqlite3 from 'sqlite3';
-import dotenv from 'dotenv';    
 import 'dotenv/config'
 import createTables from './connexion.js';
 
