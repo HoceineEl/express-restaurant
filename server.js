@@ -2,12 +2,13 @@ const express = require('express');
 const app = express();
 
 //seting the vue engine
-// app.set("view engine","ejs");
+app.set("view engine", "ejs");
+app.use(express.static(__dirname + '/public'));
 
 //create main route
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
     console.log('H');
-    res.send('hello world');
+    res.render('index')
 });
 
 //port
