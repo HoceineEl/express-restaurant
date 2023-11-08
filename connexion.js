@@ -18,31 +18,31 @@ const createDatabase = async (connectionPromise) => {
 	let connection = await connectionPromise;
 	console.log('is in')
 	await connection.exec(`
-        DROP TABLE IF EXISTS type_utilisateur;
-        DROP TABLE IF EXISTS etat_commande;
-        DROP TABLE IF EXISTS produit;
-        DROP TABLE IF EXISTS utilisateur;
-        DROP TABLE IF EXISTS commande;
-        DROP TABLE IF EXISTS commande_produit;
-    `);
+	    DROP TABLE IF EXISTS type_utilisateur;
+	    DROP TABLE IF EXISTS etat_commande;
+	    DROP TABLE IF EXISTS produit;
+	    DROP TABLE IF EXISTS utilisateur;
+	    DROP TABLE IF EXISTS commande;
+	    DROP TABLE IF EXISTS commande_produit;
+	`);
 	await connection.exec(
 		`
-		CREATE TABLE etat_commande(
+		CREATE TABLE IF NOT EXISTS etat_commande(
 			id_etat_commande INTEGER PRIMARY KEY,
 			nom TEXT NOT NULL
 		);
 		
-		CREATE TABLE produit(
+		CREATE TABLE IF NOT EXISTS produit(
 			id_produit INTEGER PRIMARY KEY,
 			nom TEXT,
 			chemin_image TEXT,
 			prix REAL
 		);
-		CREATE TABLE type_utilisateur(
+		CREATE TABLE IF NOT EXISTS type_utilisateur(
 			id_type_utilisateur INTEGER PRIMARY KEY,
 			nom TEXT NOT NULL
 		);
-		CREATE TABLE utilisateur(
+		CREATE TABLE IF NOT EXISTS utilisateur(
 			id_utilisateur INTEGER PRIMARY KEY,
 			id_type_utilisateur INTEGER,
 			courriel TEXT,
@@ -53,7 +53,7 @@ const createDatabase = async (connectionPromise) => {
 			REFERENCES type_utilisateur(id_type_utilisateur)
 		);
 		
-		CREATE TABLE commande(
+		CREATE TABLE IF NOT EXISTS commande(
 			id_commande INTEGER PRIMARY KEY,
 			id_utilisateur INTEGER,
 			id_etat_commande INTEGER,
@@ -64,7 +64,7 @@ const createDatabase = async (connectionPromise) => {
 			REFERENCES etat_commande(id_etat_commande)
 		);
 		
-		CREATE TABLE commande_produit(
+		CREATE TABLE IF NOT EXISTS commande_produit(
 			id_commande INTEGER,
 			id_produit INTEGER,
 			quantite INTEGER,
@@ -82,9 +82,9 @@ const createDatabase = async (connectionPromise) => {
 		INSERT INTO etat_commande(nom) VALUES('cuisine');
 		INSERT INTO etat_commande(nom) VALUES('livraison');
 		INSERT INTO etat_commande(nom) VALUES('terminée');
-		INSERT INTO produit(nom,prix) VALUES('toffaha',50);
-		INSERT INTO produit(nom,prix) VALUES('toffaha',50);
-		INSERT INTO produit(nom,prix) VALUES('toffaha',50);
+		INSERT INTO produit(nom,prix,chemin_image) VALUES('toffaha',50,"/assets/img/products/product-img-1.jpg");
+		INSERT INTO produit(nom,prix,chemin_image) VALUES('toffaha',50,"/assets/img/products/product-img-2.jpg");
+		INSERT INTO produit(nom,prix,chemin_image) VALUES('toffaha',50,"/assets/img/products/product-img-3.jpg");
 		
 		INSERT INTO utilisateur(id_type_utilisateur, courriel, mot_de_passe, prenom, nom)
 		VALUES(1, 'test@test.com', 'Test1234', 'Test', 'Test');`

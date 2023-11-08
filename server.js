@@ -26,30 +26,29 @@ createDatabase(open({ // Correct the function name here
     driver: sqlite3.Database
 }));
 const getSomeData = async (connectionPromise) => {
-    let connection = await connectionPromise;
+    try {
+        let connection = await connectionPromise;
+        const etatCommandData = await connection.all('SELECT * FROM etat_commande');
+        const produitData = await connection.all('SELECT * FROM produit');
 
-    // Example: Select all records from the 'type_utilisateur' table
-
-    const etatCommandData = await connection.all('SELECT * FROM etat_commande');
-    console.log('etat commande Data:', etatCommandData);
-
-    // Example: Select specific columns from the 'produit' table
-    const produitData = await connection.all('SELECT id_produit,nom, prix FROM produit');
-    console.log('Produit Data:', produitData);
-
-    // You can use similar SELECT statements to retrieve data from other tables.
-    // Make sure to specify the columns you want to retrieve and the table name in the query.
-
-    return { etatCommandData, produitData };
+        return { etatCommandData, produitData };
+    } catch (error) {
+        throw error; // Propagate the error to the caller
+    }
 };
 
 
 // Create the main route
 getSomeData(connectionPromise)
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
+    try {
+        const { produitData } = await getSomeData(connectionPromise);
 
-    res.render('index');
-
+        res.render('index', { produitData });
+    } catch (error) {
+        console.error('Error fetching produit data:', error);
+        res.status(500).send('An error occurred while fetching data.');
+    }
 });
 
 // Set the port
